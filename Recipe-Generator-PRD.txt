@@ -1,0 +1,674 @@
+RECIPE GENERATOR
+PRODUCT REQUIREMENTS DOCUMENT
+
+Version: 1.0
+Date: August 2, 2026
+Status: MVP implemented; public web release active
+Platform: Responsive React and TypeScript web application
+Product URL: https://recipe-generator-kitchen.zion632172.chatgpt.site
+
+
+EXECUTIVE SUMMARY
+
+Recipe Generator is a no-sign-up cooking companion that helps people decide what to make using ingredients they already own. It combines guided ingredient input and meal preferences with a working sample recipe system, a searchable 100-recipe restaurant catalog, special dessert and drink menus, favorites, scalable servings, and a persistent shopping list.
+
+Product promise:
+
+From "what do I have?" to a cookable recipe in a few taps, without requiring an account or sending personal pantry data to a server.
+
+The MVP uses reviewed sample recipes so the product remains useful before an AI service is connected. A dedicated generation function provides a clean boundary for adding an AI recipe-generation API later.
+
+
+1. PRODUCT CONTEXT AND VISION
+
+Problem
+
+People frequently have food at home but lack a clear plan for turning it into a meal. Many recipe websites begin with recipe search instead of the user's actual pantry and can bury useful information behind sign-ins, long articles, or shopping-first workflows.
+
+Vision
+
+Make Recipe Generator the fastest and warmest way to turn a small list of available ingredients into appealing, actionable cooking ideas. The product should feel like a thoughtful neighborhood kitchen: inviting enough to inspire, structured enough to trust, and simple enough to use while standing at the counter.
+
+Goals
+
+- Let users enter ingredients one at a time, correct mistakes, and generate recipe ideas without an account.
+- Provide at least three complete recipe suggestions with measurements, numbered steps, nutrition estimates, and missing-item guidance.
+- Support the practical tasks that follow discovery: saving, copying, scaling servings, and building a categorized shopping list.
+- Offer durable browsing through a searchable 100-recipe catalog and dedicated dessert and drink collections.
+- Preserve favorites, shopping items, and settings locally across browser sessions.
+- Create a clean integration boundary for an AI generation service without making the MVP dependent on one.
+- Work well on phones, tablets, and desktop computers.
+
+Non-goals for the MVP
+
+- User accounts, social profiles, or cross-device cloud synchronization.
+- Grocery ordering, delivery checkout, restaurant reservations, or payments.
+- Medical-grade nutrition, allergy certification, or clinical dietary advice.
+- Real-time pantry quantities, barcode scanning, or expiration tracking.
+- Production AI generation. The initial release uses reviewed sample content.
+
+
+2. USERS AND JOBS TO BE DONE
+
+Primary users
+
+The pantry-first home cook:
+Has several ingredients but no meal plan and values speed, flexibility, and reduced food waste.
+
+The busy household planner:
+Needs time, difficulty, dietary, serving, and shopping controls in one place.
+
+The inspiration browser:
+Wants restaurant-style ideas, desserts, drinks, and visually appealing menus.
+
+The newer cook:
+Needs full measurements, numbered instructions, realistic timing, and clear difficulty labels.
+
+Core jobs to be done
+
+- When I do not know what to cook, help me use what I already have so I can avoid waste and decide quickly.
+- When I have limited time or dietary needs, narrow the ideas so the result fits tonight's constraints.
+- When a recipe looks good, give me everything needed to cook it without leaving the page.
+- When I am missing ingredients, turn them into a useful shopping list.
+- When I am browsing for inspiration, let me explore a broad menu and save ideas for later.
+
+Primary journey
+
+1. Add ingredients. Enter pantry items one at a time and review them as removable tags.
+2. Tune preferences. Select meal type, available time, difficulty, dietary options, and exclusions.
+3. Generate. Submit a valid pantry and see a loading state while ideas are prepared.
+4. Choose. Compare at least three recipe suggestions and open one for complete details.
+5. Act. Scale servings, save or copy the recipe, and add missing items to the shopping list.
+
+
+3. PAGES AND NAVIGATION
+
+Home
+
+Purpose: Orient and inspire users.
+Primary actions: Start cooking and understand the three-step product flow.
+
+Recipe Generator
+
+Purpose: Create ideas from pantry ingredients.
+Primary actions: Add ingredients, set preferences, generate recipes, and regenerate.
+
+Restaurant Menu
+
+Purpose: Browse 100 complete recipes.
+Primary actions: Search, filter by category, open recipes, and save favorites.
+
+Drinks Menu
+
+Purpose: Browse zero-proof drink recipes.
+Primary actions: Open, save, scale, and copy drink recipes.
+
+Dessert Menu
+
+Purpose: Browse special dessert recipes.
+Primary actions: Open, save, scale, and copy dessert recipes.
+
+Saved Recipes
+
+Purpose: Return to favorite recipes.
+Primary actions: Open or remove a saved recipe.
+
+Shopping List
+
+Purpose: Manage ingredients the user needs to buy.
+Primary actions: Check, uncheck, and remove items organized by category.
+
+Settings
+
+Purpose: Control the local experience.
+Primary actions: Toggle light or dark mode, control reduced motion, and manage local data.
+
+Navigation requirements
+
+- Every destination must contain usable content. Blank pages and placeholder sections are not permitted.
+- All navigation links and buttons must perform their labeled action.
+- The active page must be visually distinguishable.
+- Desktop navigation uses a persistent sidebar.
+- Mobile navigation uses a compact header and scrollable bottom navigation.
+- Favorite and shopping-list counts update immediately where space allows.
+- No sign-in is required.
+
+
+4. INGREDIENT INPUT AND PREFERENCES
+
+FR-01: Ingredient entry
+
+The user can enter one ingredient at a time by selecting Add or pressing Enter. Leading and trailing whitespace is removed, and ingredient text is normalized to lowercase.
+
+FR-02: Ingredient validation
+
+The application rejects empty entries, entries without valid ingredient characters, and duplicates. A clear inline error explains how to recover.
+
+FR-03: Ingredient tags
+
+Every accepted ingredient appears as a removable tag. The remove button has an accessible label containing the ingredient name.
+
+FR-04: Meal type
+
+Supported values:
+
+- Breakfast
+- Lunch
+- Dinner
+- Snack
+- Dessert
+
+FR-05: Cooking time
+
+Supported values:
+
+- Under 15 minutes
+- Under 30 minutes
+- Under 1 hour
+- Any time
+
+FR-06: Difficulty
+
+Supported values:
+
+- Easy
+- Medium
+- Advanced
+
+FR-07: Dietary options
+
+The user may select multiple options:
+
+- Vegetarian
+- Vegan
+- Gluten-free
+- Dairy-free
+- High-protein
+- Low-carb
+
+FR-08: Exclusions
+
+The user can enter ingredients to exclude because of allergies or dislikes. Exclusions are collected separately from included pantry ingredients.
+
+FR-09: Submission validation
+
+The application must not generate recipes when the included ingredient list is empty. It must show an error that explains that at least one ingredient is required.
+
+
+5. RECIPE GENERATION
+
+FR-10: Loading state
+
+While generating recipes, the application displays a warm cooking animation and short status message. Reduced-motion settings must minimize or disable decorative movement.
+
+FR-11: Sample generation
+
+The MVP returns five reviewed sample recipes so the product works without an AI API. A valid generation must return at least three complete suggestions.
+
+FR-12: Regeneration
+
+Generate Another Recipe repeats the generation flow without clearing pantry ingredients, preferences, or exclusions.
+
+FR-13: Failure handling
+
+If generation fails, the application shows a plain-language retry message. It must preserve all user input and any previously valid results.
+
+Recipe suggestion cards include:
+
+- Food image
+- Recipe name
+- Short description
+- Total preparation and cooking time
+- Difficulty
+- Estimated calories
+- Estimated protein
+- Save control
+- View full recipe action
+
+The card grid uses three columns on wide screens, fewer columns on tablets, and one column on phones.
+
+
+6. COMPLETE RECIPE DETAILS
+
+Every recipe includes:
+
+- Recipe name
+- Food image
+- Short description
+- Preparation time
+- Cooking time
+- Difficulty level
+- Original serving size
+- Full ingredient list with numeric amounts and units
+- Shopping category for every ingredient
+- Numbered cooking instructions
+- Estimated calories
+- Estimated protein
+- Clearly identified missing ingredients
+
+Recipe tools
+
+Save recipe:
+
+- Toggle favorite state immediately.
+- Persist the saved recipe ID locally.
+- Show the recipe on the Saved Recipes page.
+- Keep favorite state synchronized across cards, catalogs, and the detail dialog.
+
+Copy or share:
+
+- Copy the recipe name, scaled ingredient list, and numbered instructions to the clipboard.
+- Confirm success or explain when the browser does not support copying.
+
+Adjust servings:
+
+- Increase or decrease servings.
+- Do not allow fewer than one serving.
+- Recalculate every ingredient amount using the ratio between current and original servings.
+
+Add missing ingredients:
+
+- Add only ingredients marked as missing.
+- Prevent duplicate shopping items.
+- Navigate to the Shopping List after adding items.
+
+
+7. FAVORITES AND SHOPPING LIST
+
+Saved Recipes requirements
+
+- Show every saved generated, restaurant, dessert, and drink recipe.
+- Allow users to open a saved recipe.
+- Allow users to remove a recipe from favorites.
+- Persist favorites through browser reloads.
+- Show a helpful empty state when no recipes are saved.
+
+Shopping List requirements
+
+- Group items into Produce, Dairy, Meat, Pantry, and Frozen categories.
+- Allow each item to be checked or unchecked without removing it.
+- Allow individual item removal.
+- Display the number of unchecked items remaining.
+- Persist the full list and checked state in local storage.
+- Show an empty state that directs users back to recipe discovery.
+
+
+8. THE 100-RECIPE RESTAURANT MENU
+
+The Restaurant Menu is a complete discovery surface, not a decorative list. It contains exactly 100 openable recipes divided evenly across ten categories.
+
+Categories
+
+1. Breakfast: 10 recipes
+2. Soups and Salads: 10 recipes
+3. Burgers and Sandwiches: 10 recipes
+4. Pasta and Noodles: 10 recipes
+5. Pizza and Flatbreads: 10 recipes
+6. Tacos and Bowls: 10 recipes
+7. Mains: 10 recipes
+8. Vegetarian: 10 recipes
+9. Desserts: 10 recipes
+10. Drinks: 10 recipes
+
+Catalog requirements
+
+- Search recipe names, descriptions, categories, and editorial tags.
+- Search is case-insensitive.
+- Provide an All 100 filter and one filter for each category.
+- Search and category filters can be combined.
+- The active filter is visually clear.
+- The result count updates from the full total of 100.
+- Each result shows an image, category, total time, name, description, menu price, open action, and save control.
+- Clear filters resets search and category state.
+- A no-results state explains what happened and includes a Show all 100 recipes action.
+- Every catalog entry opens into a complete recipe.
+- Every catalog entry supports favorites, serving adjustment, copy, and shopping-list tools.
+
+
+9. SPECIAL DESSERT AND DRINK MENUS
+
+Dessert Menu
+
+The dessert collection emphasizes celebration-worthy sweets such as cakes, cheesecake, crumble, tiramisu, creme brulee, pavlova, cookies, tart, pudding, and cobbler.
+
+Drinks Menu
+
+The drink collection emphasizes zero-proof, scalable drinks such as citrus spritzes, fruit fizz, espresso tonic, mango lassi, iced tea, coolers, sodas, shakes, and cold brew.
+
+Shared requirements
+
+- Both pages use distinctive visual treatments while remaining part of the Recipe Generator design system.
+- Every dessert and drink is a complete recipe.
+- Every item can be opened, saved, copied, and scaled.
+- Dessert and drink favorites appear on Saved Recipes.
+
+
+10. EXPERIENCE DESIGN
+
+Visual direction
+
+- Warm food-inspired palette led by cream, tomato orange, herb green, cocoa, and muted gold.
+- Modern editorial typography.
+- Rounded cards and restrained shadows.
+- Smooth state transitions.
+- High-quality food images featuring burgers, tacos, pizza, spicy chicken wings, pasta, desserts, and drinks.
+- Light and dark modes that preserve hierarchy, contrast, readability, and functional states.
+- Restaurant, dessert, and drink pages can have distinct moods but must feel like one product.
+
+Responsive behavior
+
+Desktop, above approximately 1100 pixels:
+
+- Persistent sidebar
+- Multi-column recipe and catalog grids
+- Wide hero layouts
+
+Tablet, approximately 781 to 1100 pixels:
+
+- Reduced card columns
+- Stacked generator or hero regions where necessary
+- Comfortable touch targets
+
+Phone, up to approximately 780 pixels:
+
+- Mobile header and bottom navigation
+- Single-column cards
+- Full-height recipe dialog
+- No unintended horizontal page overflow
+
+Accessibility requirements
+
+- All controls are keyboard reachable.
+- Focus states are clearly visible.
+- Icon-only controls have meaningful accessible labels.
+- Form labels are associated with inputs.
+- Validation messages use alert semantics where appropriate.
+- Recipe details use dialog semantics and an accessible name.
+- The recipe dialog has a visible close control.
+- Color is not the only indicator of selection, error, completion, or saved state.
+- Reduced-motion preferences minimize decorative movement.
+- Touch targets and spacing remain usable on small screens.
+
+
+11. DATA MODEL AND LOCAL STORAGE
+
+Recipe entity
+
+Required fields:
+
+- id
+- name
+- image
+- description
+- preparation time
+- cooking time
+- difficulty
+- servings
+- calories
+- protein
+- tags
+- ingredients
+- instructions
+
+Recipe Ingredient entity
+
+Required fields:
+
+- name
+- amount
+- unit
+- category
+- missing flag
+
+Shopping Item entity
+
+Required fields:
+
+- id
+- name
+- category
+- checked state
+
+Settings entity
+
+Required fields:
+
+- dark mode
+- reduced motion
+
+Local storage contract
+
+- Saved recipe IDs, shopping items, and settings persist on the current device and browser.
+- Malformed stored data must not prevent the application from loading.
+- The application falls back to safe defaults when stored data cannot be parsed.
+- State is written immediately after favorite, shopping, or settings changes.
+- Clearing local data removes favorites and shopping items and refreshes dependent views.
+
+
+12. FUTURE AI INTEGRATION
+
+The application exposes a dedicated asynchronous recipe-generation function. It accepts included ingredients and a structured preferences object and returns Recipe objects matching the product's required schema.
+
+The MVP implementation returns reviewed sample recipes. A future provider integration must replace the implementation behind this function instead of coupling API logic directly to React components.
+
+AI integration requirements
+
+1. Validate before request. Require at least one included ingredient and sanitize all text fields.
+2. Send structured constraints. Pass meal type, time, difficulty, dietary options, and exclusions separately.
+3. Require schema-complete output. Reject or repair responses missing measurements, steps, timing, nutrition estimates, or missing-item flags.
+4. Fail safely. Preserve user input and previous valid results when generation fails.
+5. Protect secrets. Keep provider credentials on a server. Never embed API keys in client code or standalone HTML.
+6. Retain fallback. Keep sample recipes available when the AI service is unavailable or not configured.
+
+
+13. NON-FUNCTIONAL REQUIREMENTS
+
+Performance and reliability
+
+- First meaningful content should appear quickly on typical mobile broadband.
+- Large images should be responsive and efficiently served.
+- Saving, filtering, serving adjustment, and shopping-list updates should feel immediate.
+- The product remains usable when a food image fails to load.
+- Generation failures do not erase ingredients, preferences, exclusions, favorites, settings, or shopping data.
+- The standalone HTML file runs locally without a build step.
+- The standalone HTML file does not require authentication.
+
+Privacy and safety
+
+- No account or identity data is required for MVP use.
+- Pantry, preference, favorite, setting, and shopping data remain on the user's device in the sample version.
+- Allergy exclusions are product constraints, not a guarantee of clinical safety.
+- Nutrition values are estimates and are not medical advice.
+- Any future AI provider must be disclosed before user data is transmitted.
+
+
+14. SUCCESS METRICS
+
+These values are initial product targets, not observed results.
+
+Valid generation completion
+
+Target: At least 95 percent.
+Definition: Successful results divided by valid generation attempts.
+
+Recipe detail open rate
+
+Target: At least 40 percent.
+Definition: Sessions opening a full recipe divided by sessions with generated results.
+
+Favorite adoption
+
+Target: At least 15 percent.
+Definition: Discovery sessions saving at least one recipe.
+
+Shopping-list adoption
+
+Target: At least 10 percent.
+Definition: Recipe-detail sessions adding at least one missing ingredient.
+
+Catalog engagement
+
+Target: At least 25 percent.
+Definition: Restaurant Menu sessions using search, using a filter, or opening a recipe.
+
+Seven-day return
+
+Target: At least 20 percent.
+Definition: Anonymous returning browsers divided by eligible first-time browsers.
+
+Analytics must be privacy-preserving. Event names and definitions must be documented before collection.
+
+
+15. ACCEPTANCE CRITERIA
+
+Pantry input
+
+- Users can add valid ingredients.
+- Invalid, duplicate, and empty ingredients are rejected.
+- Users can remove ingredients.
+- All paths work on desktop and phone layouts.
+
+Preferences
+
+- Every meal, time, and difficulty option can be selected.
+- Multiple dietary options can be selected.
+- Exclusions are accepted separately.
+- Preference state is included in the generation request.
+
+Generation
+
+- Empty submission is blocked.
+- Loading, success, retry, and regenerate flows work.
+- At least three complete recipes are returned.
+- The MVP returns five sample recipes.
+
+Recipe details
+
+- Every required field appears.
+- Ingredients include measurements.
+- Instructions are numbered.
+- Serving changes update every ingredient amount.
+- Missing ingredients are clearly identified.
+
+Favorites
+
+- Save and remove work from recipe cards, catalog entries, dialogs, and the saved page.
+- Favorite state survives reload.
+
+Shopping list
+
+- Missing items add without duplicates.
+- Items are grouped by category.
+- Check, uncheck, and removal controls work.
+- Shopping state survives reload.
+
+100-recipe catalog
+
+- Exactly 100 recipes are present.
+- Exactly ten categories are present.
+- Search and category filters work independently and together.
+- Clear filters and no-results recovery work.
+- Every result opens and can be saved.
+
+Special menus
+
+- Dessert and drink pages contain complete working recipes.
+- Shared recipe tools behave consistently.
+
+Settings
+
+- Light and dark modes apply across all pages.
+- Reduced motion applies to decorative animations.
+- Settings survive reload.
+
+Responsive interface
+
+- No primary action is blocked at phone, tablet, or desktop sizes.
+- No unintended horizontal page overflow appears.
+
+Standalone version
+
+- The HTML file opens locally.
+- Main product flows are functional.
+- No sign-in or build step is required.
+
+
+16. RELEASE PLAN
+
+Phase 1: Complete UI and sample system
+
+Responsive pages, reviewed sample recipes, local persistence, special menus, 100-recipe catalog, and standalone HTML.
+
+Phase 2: Quality and instrumentation
+
+Accessibility audit, performance budget, event definitions, content review, and cross-browser validation.
+
+Phase 3: AI generation pilot
+
+Server-side AI integration, schema validation, safety prompts, retry behavior, and sample fallback.
+
+Phase 4: Personalization
+
+Optional history, preference learning, pantry suggestions, and cloud synchronization only if account value is proven.
+
+
+17. RISKS AND MITIGATIONS
+
+Risk: AI output may be incomplete or unsafe.
+Severity: High.
+Mitigation: Strict schema validation, exclusion prompts, disclaimers, and reviewed sample fallback.
+
+Risk: Food image links may become unavailable.
+Severity: Medium.
+Mitigation: Use stable hosted assets, preserve text-first usability, and provide appropriate image alternatives.
+
+Risk: Local storage is device-specific.
+Severity: Medium.
+Mitigation: Explain persistence clearly and consider optional export or accounts only after demand is demonstrated.
+
+Risk: Nutrition estimates may appear authoritative.
+Severity: Medium.
+Mitigation: Label all values as estimates and avoid medical positioning.
+
+Risk: A 100-item catalog may feel overwhelming.
+Severity: Medium.
+Mitigation: Provide prominent search, ten category filters, result counts, and clear empty-state recovery.
+
+Risk: A large content surface can drift or become inconsistent.
+Severity: Medium.
+Mitigation: Use a shared Recipe schema, reusable components, automated validation, and editorial review.
+
+
+18. OPEN PRODUCT DECISIONS
+
+- Should future AI generation use one provider or a provider-independent service layer?
+- Should allergy exclusions remain free text or include standardized allergen controls?
+- Should nutrition remain estimated or use a verified nutrition database?
+- Should users be able to add arbitrary shopping items outside recipe flows?
+- What evidence would justify optional accounts without compromising the no-sign-up value proposition?
+
+
+19. FUTURE OPPORTUNITIES
+
+- Pantry history and ingredient quantity tracking.
+- Expiration reminders and food-waste reduction insights.
+- Weekly meal planning with consolidated shopping lists.
+- Cuisine, equipment, budget, seasonality, and nutritional-goal filters.
+- User-created recipes, cooking notes, ratings, and private household collections.
+- Export and print layouts.
+- Calendar-based meal planning.
+- Grocery partner integrations.
+- Localized measurements, languages, dietary vocabularies, and regional ingredients.
+
+
+DEFINITION OF SUCCESS
+
+Recipe Generator succeeds when a user can arrive with a few ingredients, confidently choose something appealing, and leave with a practical plan to cook it without friction, sign-in, or dead ends.
+
+
+DOCUMENT CONTROL
+
+Owner: Recipe Generator Product Team
+Review cadence: Update at each material product release
+Next review: Before AI API implementation
+
